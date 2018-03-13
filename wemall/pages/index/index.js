@@ -150,29 +150,46 @@ Page({
       }
     ]
 
-    var cats = [
-      {
-        id: 0,
-        name: "全部"
+    // var cats = [
+    //   {
+    //     id: 0,
+    //     name: "全部"
+    //   },
+    //   {
+    //     id: 1,
+    //     name: "化妆品"
+    //   },
+    //   {
+    //     id: 2,
+    //     name: "包包"
+    //   },
+    //   {
+    //     id: 3,
+    //     name: "日用百货"
+    //   }
+    // ]
+    wx.request({
+      url:app.globalData.hostUrl+'v1/category',
+      data:{
+        key:app.globalData.shopName
       },
-      {
-        id: 1,
-        name: "化妆品"
-      },
-      {
-        id: 2,
-        name: "包包"
-      },
-      {
-        id: 3,
-        name: "日用百货"
+      success:function(res){
+        if(res.statusCode==400){
+          wx.showModal({
+            title: '提示',
+            content: '服务请求失败',
+          })
+        }else{
+          that.setData({
+            categories:res.data.data
+          })
+        }
       }
-    ]
+    })
 
     this.setData({
       goods: carts,
       banners: carts,
-      categories: cats
     });
   }
 })

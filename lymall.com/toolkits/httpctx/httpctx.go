@@ -1,6 +1,11 @@
 package httpctx
 
 import (
+	"encoding/json"
+	"errors"
+	"strconv"
+	"strings"
+
 	"gopkg.in/macaron.v1"
 )
 
@@ -40,4 +45,36 @@ func (ctx *HTTPCtx) Error(code int, msg string) {
 	ctx.JSON(code, map[string]string{"Error": msg})
 }
 
+// CheckFormData check client post data
+func (ctx *HTTPCtx) CheckFormData(v ...interface{}) error {
+	body, err := ctx.Req.Body().Bytes()
+	if err != nil {
+		return err
+	}
 
+	for _, obj := range v {
+		err = json.Unmarshal(body, obj)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// GetDelIDs get to delete ids
+func (ctx *HTTPCtx) GetDelIDs() ([]string, error) {
+	ids := ctx.Params(":ids")
+	// 删除数据，id不能为空
+	if ids == "" {
+		return nil, errors.New("the :ids params does not exists")
+	}
+	// 验证ids是否是逗号隔开字符串
+	idsStrs := strings.Split(ids, ",")
+	for _, v := range idsStrs {
+		_, err := strconv.Atoi(v)
+		if err != nil {
+			return nil, errors.New("the :ids params's format is invalid")
+		}
+	}
+	return idsStrs, nil
+}

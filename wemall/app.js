@@ -34,6 +34,8 @@ App({
     })
   },
   globalData: {
-    userInfo: null
+    userInfo: null,
+    shopName:"test",
+    hostUrl:"http://127.0.0.1:8973/",
   }
 })

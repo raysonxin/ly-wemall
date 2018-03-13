@@ -3,11 +3,20 @@ create database lymall;
 
 use database lymall;
 
+drop table if exists shop;
+create table shop(
+    id          int             not null auto_increment comment '商店编号',
+    name        varchar(50)     not null comment '商店名称',
+    primary key(id)
+)engine=innodb default charset=utf8 comment '商店信息表';
+
 drop table if exists category;
 create table category(
     id          int             not null auto_increment comment '分类编号',
     name        varchar(50)     not null comment '分类名称',
-    primary key(id)
+    shop_id     int             not null comment '所属商店',
+    primary key(id),
+    constraint foreign key(shop_id) references shop(id) on delete cascade
 )engine=innodb default charset=utf8 comment '商品分类';
 
 drop table if exists products;

@@ -26,6 +26,7 @@ func New() *HTTPServer {
 
 	//load configuration
 	conf, err := utils.NewServiceCfg("")
+
 	if err != nil {
 		log.Panicln("failed to read config file", err)
 	}

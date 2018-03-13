@@ -26,10 +26,10 @@
     </view>
     <view class="type-container">
         <scroll-view class="type-navbar" scroll-x="true">
-            <view class="type-box" wx:for-items="{{categories}}" wx:key="id">
-                <view id="{{item.id}}" class="type-navbar-item {{activeCategoryId == item.id ? 'type-item-on' : ''}}" 
+            <view class="type-box" wx:for-items="{{categories}}" wx:key="Id">
+                <view id="{{item.Id}}" class="type-navbar-item {{activeCategoryId == item.Id ? 'type-item-on' : ''}}" 
                     bindtap="tabClick">
-                    {{item.name}}
+                    {{item.Name}}
                 </view>
             </view>
         </scroll-view>
