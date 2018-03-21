@@ -6,10 +6,22 @@ App({
     logs.unshift(Date.now())
     wx.setStorageSync('logs', logs)
 
+    var that = this;
     // 登录
     wx.login({
       success: res => {
         // 发送 res.code 到后台换取 openId, sessionKey, unionId
+        wx.request({
+          url: 'https://api.weixin.qq.com/sns/jscode2session?appid=wxdeeb117833e3f8da&secret=8e184d1763964f2d7413d3e684e6424d&js_code=' + res.code + '&grant_type=authorization_code',
+          data: {},
+          header: {
+            'content-type': 'application/json'
+          },
+          success: function (res) {
+            console.log(res);
+            that.globalData.openId = res.data.openid;
+          }
+        })
       }
     })
     // 获取用户信息
@@ -35,7 +47,8 @@ App({
   },
   globalData: {
     userInfo: null,
-    shopName:"test",
-    hostUrl:"http://127.0.0.1:8973/",
+    openId: '',
+    shopId: "db2d59c0-1d52-421f-aa7d-a1f801f50280",
+    hostUrl: "http://127.0.0.1:8973/",
   }
 })

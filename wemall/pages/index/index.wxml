@@ -1,11 +1,12 @@
 <!--index.wxml-->
 <view class="container">
-     <!-- <view class="swiper-container">
-        <swiper class="swiper_box" autoplay="{{autoplay}}" interval="{{interval}}" duration="{{duration}}" bindchange="swiperchange">
+   <view class="swiper-container">
+        <swiper class="swiper_box" 
+                    autoplay="{{autoplay}}" interval="{{interval}}" duration="{{duration}}" bindchange="swiperchange">
             <block wx:for="{{banners}}" wx:key="id">
                 <swiper-item>
-                    <image bindtap="tapBanner" data-id="{{item.id}}" src="{{item.pic}}" class="slide-image" 
-                        width="750rpx" height="562.5rpx"/>
+                    <image bindtap="tapBanner" data-id="{{item.businessId}}" 
+                    src="{{item.picUrl}}" class="slide-image" width="750rpx" height="562.5rpx"/>
                 </swiper-item>
             </block>
         </swiper>
@@ -14,7 +15,7 @@
                 <view class="dot{{index == swiperCurrent ? ' active' : ''}}"></view>  
             </block>  
         </view>  
-    </view>  -->
+   </view>
     <view class="search-view" style="background:{{ scrollTop === 0 ?'-webkit-linear-gradient(top, rgba(105,195,170, 1), rgba(105,195,170, 0.3))' :( scrollTop<200 ? 'rgba(105,195,170,'+(scrollTop/400+0.3) +')' : 'rgba(105,195,170,1)')  }} ">
         <view class="serarch-content">
             <image src="/images/search-pic.png" class="search-icon" />
@@ -35,13 +36,13 @@
         </scroll-view>
     </view>
     <view class="goods-container">
-        <view class="goods-box" wx:for-items="{{goods}}" wx:key="{{index}}" bindtap="toDetailsTap" data-id="{{item.id}}">
+        <view class="goods-box" wx:for-items="{{goods}}" wx:key="{{Id}}" bindtap="toDetailsTap" data-id="{{item.Id}}">
             <view class="img-box">
-                <image src="{{item.pic}}" class="image" mode="aspectFill" lazy-load="true"/>
+                <image src="{{picHost+item.CoverUrl}}" class="image" mode="aspectFill" lazy-load="true"/>
             </view>
-            <view class="goods-title">{{item.name}}</view>
+            <view class="goods-title">{{item.Name}}</view>
                 <view style='display:flex;'>
-                <view class="goods-price">参考报价 ¥ {{item.price}}</view>
+                <view class="goods-price">参考报价 ¥ {{item.Price}}</view>
                 <!-- <view wx:if="{{item.originalPrice && item.originalPrice > 0}}" class="goods-price" 
                     style='color:#aaa;text-decoration:line-through'>¥ {{item.originalPrice}}</view> -->
            </view>           

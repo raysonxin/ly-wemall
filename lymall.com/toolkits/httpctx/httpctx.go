@@ -3,6 +3,7 @@ package httpctx
 import (
 	"encoding/json"
 	"errors"
+	"net/http"
 	"strconv"
 	"strings"
 
@@ -37,12 +38,20 @@ func MapCustom(m *macaron.Macaron, args ...interface{}) macaron.Handler {
 	}
 }
 
-// Error reponse error message
-func (ctx *HTTPCtx) Error(code int, msg string) {
+// Error reponse error message,compatible for wechat mini app
+func (ctx *HTTPCtx) Error(code int, err string) {
 	if code == 0 {
 		code = 400
 	}
-	ctx.JSON(code, map[string]string{"Error": msg})
+	ctx.JSON(code, map[string]interface{}{"code": code, "error": err})
+}
+
+// Success response success message,compatible for wechat mini app
+func (ctx *HTTPCtx) Success(code int, v interface{}) {
+	if code == 0 {
+		code = http.StatusOK
+	}
+	ctx.JSON(code, map[string]interface{}{"code": code, "data": v})
 }
 
 // CheckFormData check client post data

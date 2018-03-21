@@ -39,7 +39,7 @@ func (ctx *HTTPCtx) DbAddOne(v interface{}) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, v)
+	ctx.Success(http.StatusOK, v)
 }
 
 // DbUpdateOne udpate one database record
@@ -73,7 +73,7 @@ func (ctx *HTTPCtx) DbUpdateOne(v interface{}, field string) {
 		ctx.Error(http.StatusBadRequest, fmt.Sprintf("update database record error:%s", err.Error()))
 		return
 	}
-	ctx.JSON(http.StatusOK, v)
+	ctx.Success(http.StatusOK, v)
 }
 
 // DbDelete multiple delete record by the specified field
@@ -101,5 +101,5 @@ func (ctx *HTTPCtx) DbDelete(v interface{}, field string) {
 		ctx.Error(http.StatusBadRequest, fmt.Sprintf("failed to delete records:%s", err.Error()))
 		return
 	}
-	ctx.Status(http.StatusOK)
+	ctx.Success(http.StatusOK, "200")
 }

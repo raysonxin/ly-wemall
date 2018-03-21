@@ -86,3 +86,20 @@ create table product_stock_detail(
     constraint foreign key(ppv_id) references product_property_value(id) on delete cascde,
     primary key(id)
 )engine=innodb default charset=utf8 comment '商品库存细节';
+
+drop table if exists shop_cart;
+create table shop_cart(
+    id              int             not null auto_increment comment '主键编号',
+    open_id         varchar(100)    not null comment '微信用户openid',
+    product_id      int             not null comment '产品编号',
+    product_name    varchar(100)    not null comment '产品名称',
+    count           int             not null comment '商品数量',
+    image           varchar(200)    not null comment '产品图片', 
+    price           int             not null comment '产品价格',
+    ppv_brief       varchar(100)    not null comment '规格描述',
+    ppv_ids         varchar(100)    not null comment '规格编号列表',
+    stock_id        int             not null comment '库存单品编号',
+    primary key(id),
+    index(open_id),
+    constraint foreign key(product_id) references products(id) on delete cascade
+)engine=innodb default charset=utf8 comment '购物车信息';

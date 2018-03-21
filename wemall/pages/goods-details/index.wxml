@@ -3,22 +3,22 @@
     <view class="swiper-container">
         <swiper class="swiper_box" autoplay="{{autoplay}}" interval="{{interval}}" duration="{{duration}}" 
             bindchange="swiperchange">
-            <block wx:for="{{goodsDetail.pics}}" wx:key="id">
+            <block wx:for="{{goodsDetail.Gallery}}" wx:key="Id">
                 <swiper-item>
-                    <image src="{{item.pic}}" class="slide-image" mode="aspectFit" lazy-load="true" width="335" height="150"/>
+                    <image src="{{picUrl+item.Url}}" class="slide-image" mode="aspectFit" lazy-load="true" width="335" height="150"/>
                 </swiper-item>
             </block>    
         </swiper>
         <view class="dots">  
-            <block wx:for="{{goodsDetail.pics}}" wx:key="unique">
+            <block wx:for="{{goodsDetail.Gallery}}" wx:key="unique">
                 <view class="dot{{index == swiperCurrent ? ' active' : ''}}"></view>  
             </block>  
         </view>
     </view>
 
     <view class="goods-info">
-        <view class="goods-title">{{goodsDetail.basicInfo.name}}</view>
-        <view class="goods-price" style="padding-left:35rpx;">参考价格 ￥ {{goodsDetail.basicInfo.price}}</view>
+        <view class="goods-title">{{goodsDetail.Name}}</view>
+        <view class="goods-price" style="padding-left:35rpx;">参考价格 ￥ {{goodsDetail.Price}}</view>
         <view class="goods-info-fx">
             <image src='../../images/qd.png' />
             <button open-type="share">分享</button>
@@ -54,15 +54,15 @@
         <view class="popup-contents">
              <view class="pop-goods-info">
                 <view class="pop-img-box">
-                    <image src="{{goodsDetail.basicInfo.pic}}" class="goods-thumbnail"/>
+                    <image src="{{picUrl+goodsDetail.CoverUrl}}" class="goods-thumbnail"/>
                 </view>
                 <view class="pop-goods-des">
-                    <view class="pop-goods-title">{{goodsDetail.basicInfo.name}}</view>
-                    <view class="pop-goods-price">¥ {{goodsDetail.basicInfo.price}}</view>
+                    <view class="pop-goods-title">{{goodsDetail.Name}}</view>
+                    <view class="pop-goods-price">¥ {{goodsDetail.Price}}</view>
                 </view>
                 <view class="pop-goods-close" bindtap="closePopupTap"></view>
              </view>
-             <view class="size-label-box">
+             <!-- <view class="size-label-box">
                   <view class="label">{{goodsDetail.property.name}}：</view>
                   <view class="label-item-box">
                       <block wx:for="{{goodsDetail.property.values}}" wx:key="id">                     
@@ -73,7 +73,23 @@
                           </view>  
                   </block>
                   </view>
-             </view> 
+             </view>  -->
+
+              <view class="size-label-box">
+                <block wx:for="{{goodsDetail.Properties}}" wx:for-item="property" wx:for-index="idx" wx:key="Id">
+                <view class="label">{{property.Name}}</view> 
+                <view class="label-item-box">
+                    <view class="label-item {{item.active ? 'active' : '' }}" 
+                          wx:for="{{property.SubProperties}}" wx:key="Id" 
+                          bindtap="labelItemTap" data-ppindex="{{idx}}" 
+                          data-ppid="{{property.Id}}" data-ppname="{{property.Name}}" 
+                          data-subindex="{{index}}" data-subid="{{item.Id}}" data-subname="{{item.Name}}">
+                        {{item.Name}}
+                    </view> 
+                </view>
+                </block>
+             </view>
+
              <view class="buy-num-box">
                 <view class="num-label">选择数量</view>
                 <view class="num-box">

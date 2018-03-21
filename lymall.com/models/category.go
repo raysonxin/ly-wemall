@@ -4,7 +4,7 @@ package models
 type CategoryModel struct {
 	Id     int    `gorm:"column:id;primary_key"`
 	Name   string `gorm:"column:name"`
-	ShopId int    `gorm:"column:shop_id"`
+	ShopId string `gorm:"column:shop_id"`
 }
 
 // TableName 返回表名

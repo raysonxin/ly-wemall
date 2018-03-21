@@ -8,6 +8,7 @@ Page({
    * 页面的初始数据
    */
   data: {
+    goodsId: 0,
     autoplay: true,
     interval: 3000,
     duration: 1000,
@@ -16,6 +17,7 @@ Page({
 
     hasMoreSelect: false,
     selectSize: "",
+    selected: [],
 
     buyNumber: 1,
     buyNumMin: 1,
@@ -24,6 +26,9 @@ Page({
     hideShopPopup: true,
     stockId: 0,
     canSubmit: false,
+    picUrl: '',
+    shopCartInfo: {},
+    shopNum: 0,
   },
 
   //事件处理函数
@@ -103,27 +108,39 @@ Page({
     var that = this;
 
     //所有取消选中
-    for (var i = 0; i < that.data.goodsDetail.property.values.length; i++) {
-      that.data.goodsDetail.property.values[i].active = false;
+    var ppIndex = e.currentTarget.dataset.ppindex;
+    for (var i = 0; i < that.data.goodsDetail.Properties[ppIndex].SubProperties.length; i++) {
+      that.data.goodsDetail.Properties[ppIndex].SubProperties[i].active = false;
     }
 
     //获取当前选中
-    var itemId = e.currentTarget.dataset.itemid;
-    var itemName = e.currentTarget.dataset.itemname;
+    var ppId = e.currentTarget.dataset.ppid;
+    var ppName = e.currentTarget.dataset.ppname;
+    var subId = e.currentTarget.dataset.subid;
+    var subName = e.currentTarget.dataset.subname;
+    var subIndex = e.currentTarget.dataset.subindex;
+
+    var selInfo = {};
+    selInfo.ppvId = subId;
+    selInfo.ppvDesc = ppName + ":" + subName;
 
     //设置当前选中
-    for (var i = 0; i < that.data.goodsDetail.property.values.length; i++) {
-      var item = that.data.goodsDetail.property.values[i];
-      if (item.id == itemId) {
-        that.data.goodsDetail.property.values[i].active = true;
-      }
+    that.data.goodsDetail.Properties[ppIndex].SubProperties[subIndex].active = true;
+    that.data.selected[ppId] = selInfo;
+
+    var selectedCount = Object.keys(that.data.selected).length;
+    var ppCount = that.data.goodsDetail.Properties.length;
+
+    if (selectedCount == ppCount) {
+      that.data.canSubmit = true;
     }
 
     //设置结果
     this.setData({
       goodsDetail: that.data.goodsDetail,
-      stockId: 1,
-      canSubmit: true,
+      //stockId: 1,
+      canSubmit: that.data.canSubmit,
+      selected: that.data.selected
     })
   },
 
@@ -132,7 +149,7 @@ Page({
    */
   addShopCart: function () {
     //若商品有多个属性
-    if (this.data.goodsDetail.property && !this.data.canSubmit) {
+    if (this.data.goodsDetail.HasProperty && !this.data.canSubmit) {
       wx.showModal({
         title: '提示',
         content: '请选择商品规格！',
@@ -141,6 +158,47 @@ Page({
       this.bindGuiGeTap();
       return;
     }
+
+    var brief = "";
+    var ppvIds = "";
+    for (var key in this.data.selected) {
+      brief = brief + this.data.selected[key].ppvDesc + " ";
+      ppvIds = ppvIds + this.data.selected[key].ppvId + ",";
+    }
+
+    var oneCart = {};
+    oneCart.ProductId = this.data.goodsDetail.Id;
+    oneCart.ProductName = this.data.goodsDetail.Name;
+    oneCart.Count = this.data.buyNumber;
+    oneCart.Image = this.data.goodsDetail.CoverUrl;
+    oneCart.Price = this.data.goodsDetail.Price;
+    oneCart.PpvBrief = brief;
+    oneCart.PpvIds = ppvIds;
+    oneCart.OpenId = app.globalData.openId;
+    oneCart.ShopId = app.globalData.shopId;
+
+    var that = this;
+    wx.request({
+      url: app.globalData.hostUrl + 'v1/shop/cart',
+      method: "POST",
+      header: { 'content-type': 'application/x-www-form-urlencoded' },
+      data: JSON.stringify(oneCart),
+      success: function (res) {
+        console.log(res);
+        if (res.data.code != 200) {
+          wx.showModal({
+            title: '提示',
+            content: '加入心愿单请求服务接口异常',
+          })
+          console.log(res.data.error)
+        } else {
+          var newNum = that.data.shopNum + that.data.buyNumber;
+          that.setData({
+            shopNum: newNum
+          })
+        }
+      }
+    })
 
     this.closePopupTap();
 
@@ -156,51 +214,61 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
-    var that = this;
-    var test = {
-      basicInfo: {
-        id: 1,
-        name: "Dior MAC Test商品名称",
-        price: 199,
-        pic: "../../images/products/7.jpg"
-      },
-      pics: [
-        {
-          pic: "../../images/products/7.jpg"
-        },
-        {
-          pic: "../../images/products/7.jpg"
-        },
-      ],
-      property: {
-        id: 11,
-        name: "颜色",
-        values: [
-          {
-            id: 1,
-            parentId: 1,
-            name: "樱桃红"
-          },
-          {
-            id: 2,
-            parentId: 1,
-            name: "樱花粉"
-          },
-          {
-            id: 3,
-            parentId: 1,
-            name: "玫瑰红"
-          }
-        ]
-      },
-      content: "<div style=\"TEXT-ALIGN: center\"><img alt=\"\" id=\"4fff412ebc63415e9b21f4646113bddf \" class=\"\" src=\"//img30.360buyimg.com/popWaterMark/jfs/t3901/286/1140805141/96469/4611cd86/586b203fN961f03da.jpg\"><br><img alt=\"\" id=\"201d5dfc0b164fdca4f02ca59514e621 \" class=\"\" src=\"//img30.360buyimg.com/popWaterMark/jfs/t3997/241/1147355348/82277/deac1b02/586b2040N73fc3b5c.jpg\"><br><img alt=\"\" id=\"cab567feecfb472aafbc3c1658f2baea \" class=\"\" src=\"//img30.360buyimg.com/popWaterMark/jfs/t3049/346/5308628388/65671/3d202642/586b2041Nfe3886b9.jpg\"><br><img alt=\"\" id=\"1aeef61a56f7419b801d94eb3bcac6b7 \" class=\"\" src=\"//img30.360buyimg.com/popWaterMark/jfs/t3055/135/5395852996/79673/8d6848/586b2041N1b269826.jpg\"><br><img alt=\"\" id=\"1b2f3e0dace24effbfda2785a9d23bf7 \" class=\"\" src=\"//img30.360buyimg.com/popWaterMark/jfs/t3055/141/5342297838/68116/1f3c3ffe/586b2042N9681a189.jpg\"><br></div>"
-    }
     this.setData({
-      goodsDetail: test,
-      hasMoreSelect: true,
-      selectSize: "选择：颜色"
-    });
-    WxParse.wxParse('article', 'html', test.content, that, 5);
+      picUrl: app.globalData.hostUrl
+    })
+    console.log(options)
+    var id = options.id
+    var that = this;
+
+    wx.request({
+      url: app.globalData.hostUrl + 'v1/shop/goods/' + id,
+      success: function (res) {
+        if (res.data.code != 200) {
+          wx.showModal({
+            title: '提示',
+            content: '请求服务接口异常',
+          })
+          console.log(res.data.error)
+        } else {
+          console.log(res.data.data)
+          if (res.data.data.HasProperty) {
+            var tempStr = "选择："
+            for (var i = 0; i < res.data.data.Properties.length; i++) {
+              tempStr += res.data.data.Properties[i].Name + " "
+            }
+          }
+          that.setData({
+            goodsDetail: res.data.data,
+            hasMoreSelect: res.data.data.HasProperty,
+            selectSize: tempStr,
+          })
+          WxParse.wxParse('article', 'html', res.data.data.Content, that, 5);
+        }
+      }
+    })
+
+    //查询购物车商品数量
+    wx.request({
+      url: app.globalData.hostUrl + 'v1/shop/cart/count',
+      data: {
+        shop: app.globalData.shopId,
+        user: app.globalData.openId
+      },
+      success: function (res) {
+        if (res.data.code != 200) {
+          wx.showModal({
+            title: '提示',
+            content: '请求服务接口异常',
+          })
+          console.log(res.data.error)
+        } else {
+          that.setData({
+            shopNum: res.data.data.Total
+          })
+        }
+      }
+    })
   },
 
   /**

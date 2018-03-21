@@ -4,10 +4,10 @@ const app = getApp()
 
 Page({
   data: {
-    // autoplay:true,
-    // interval: 3000,
-    // duration: 1000,
-    // swiperCurrent:0,
+    autoplay:true,
+    interval: 3000,
+    duration: 1000,
+    swiperCurrent:0,
     scrollTop: "0",
     loadingMoreHidden: true,
     categories: [],           //定义产品分类
@@ -16,6 +16,8 @@ Page({
     goods: [],                 //商品列表
 
     searchInput: '',
+    pageInfo: {},
+    picHost: ''
   },
   // swiperchange:function(e){
   //   this.setData({
@@ -35,7 +37,7 @@ Page({
       searchInput: e.detail.value
     })
   },
-  
+
   //商品分类切换事件
   tabClick: function (e) {
     this.setData({
@@ -57,9 +59,63 @@ Page({
   onReachBottom: function () {
 
   },
-  
+
   //查询商品列表
   getGoodsList: function (categoryId) {
+    var that = this
+    wx.request({
+      url: app.globalData.hostUrl + 'v1/shop/goods',
+      data: {
+        shop: app.globalData.shopId,
+        category: categoryId,
+        keywords: this.data.searchInput
+      },
+      success: function (res) {
+        if (res.data.code != 200) {
+          wx.showModal({
+            title: '提示',
+            content: '请求服务接口异常',
+          })
+          console.log(res.data.error)
+        } else {
+          that.setData({
+            goods: res.data.data,
+            pageInfo: res.data.page
+          })
+        }
+      }
+    })
+  },
+
+  getGoodsCategory: function () {
+    var that = this
+
+    wx.request({
+      url: app.globalData.hostUrl + 'v1/shop/category',
+      data: {
+        shop: app.globalData.shopId
+      },
+      success: function (res) {
+        if (res.statusCode != 200) {
+          wx.showModal({
+            title: '提示',
+            content: '请求服务接口异常',
+          })
+          console.log(res.data.error)
+        } else {
+          var tempCats = res.data.data
+          var allCat = {};
+          allCat.Id = 0;
+          allCat.Name = '全部';
+          allCat.ShopId = ''
+          tempCats.unshift(allCat);
+
+          that.setData({
+            categories: tempCats,
+          })
+        }
+      }
+    })
 
   },
 
@@ -72,124 +128,15 @@ Page({
 
   // 搜索按钮事件
   toSearch: function () {
-    //this.getGoodsList(this.data.activeCategoryId);
-    var carts = [
-      {
-        id: 1,
-        name: "【爱宝宝母婴微商城】防腹泻奶粉——赋儿嘉",
-        pic: "../../images/products/3.jpg",
-        price: 198,
-        originalPrice: 250,
-        count: 2
-      },
-      {
-        id: 2,
-        name: "【爱宝宝母婴微商城】防腹泻奶粉",
-        pic: "../../images/products/4.jpg",
-        price: 298,
-        originalPrice: 350,
-        count: 3
-      }]
-
-    this.setData({
-      goods: carts,
-    });
-
+    this.getGoodsList(this.data.activeCategoryId);
   },
-  
-  onLoad: function () {
-    var that = this
-    var carts = [
-      {
-        id: 1,
-        name: "【爱宝宝母婴微商城】防腹泻奶粉——赋儿嘉",
-        pic: "../../images/products/3.jpg",
-        price: 198,
-        originalPrice: 250,
-        count: 2
-      },
-      {
-        id: 2,
-        name: "【爱宝宝母婴微商城】防腹泻奶粉",
-        pic: "../../images/products/4.jpg",
-        price: 298,
-        originalPrice: 350,
-        count: 3
-      },
-      {
-        id: 3,
-        name: "【爱宝宝母婴微商城】防腹泻奶粉——赋儿嘉",
-        pic: "../../images/products/7.jpg",
-        price: 198,
-        originalPrice: 250,
-        count: 2
-      },
-      {
-        id: 4,
-        name: "【爱宝宝母婴微商城】防腹泻奶粉",
-        pic: "../../images/products/9.jpg",
-        price: 298,
-        originalPrice: 350,
-        count: 3
-      },
-      {
-        id: 5,
-        name: "【爱宝宝母婴微商城】防腹泻奶粉——赋儿嘉",
-        pic: "../../images/products/11.jpg",
-        price: 198,
-        originalPrice: 250,
-        count: 2
-      },
-      {
-        id: 6,
-        name: "【爱宝宝母婴微商城】防腹泻奶粉",
-        pic: "../../images/products/2.jpg",
-        price: 298,
-        originalPrice: 350,
-        count: 3
-      }
-    ]
 
-    // var cats = [
-    //   {
-    //     id: 0,
-    //     name: "全部"
-    //   },
-    //   {
-    //     id: 1,
-    //     name: "化妆品"
-    //   },
-    //   {
-    //     id: 2,
-    //     name: "包包"
-    //   },
-    //   {
-    //     id: 3,
-    //     name: "日用百货"
-    //   }
-    // ]
-    wx.request({
-      url:app.globalData.hostUrl+'v1/category',
-      data:{
-        key:app.globalData.shopName
-      },
-      success:function(res){
-        if(res.statusCode==400){
-          wx.showModal({
-            title: '提示',
-            content: '服务请求失败',
-          })
-        }else{
-          that.setData({
-            categories:res.data.data
-          })
-        }
-      }
+  onLoad: function () {
+    this.setData({
+      picHost: app.globalData.hostUrl
     })
 
-    this.setData({
-      goods: carts,
-      banners: carts,
-    });
+    this.getGoodsCategory()
+    this.getGoodsList(0)
   }
 })

@@ -14,14 +14,20 @@ type CategoryController struct {
 
 // List Get goods category list
 func (c *CategoryController) List(ctx *httpctx.HTTPCtx, db *gorm.DB) {
-	list := make([]*models.CategoryModel, 0)
-	err := db.Table("category").Scan(&list).Error
-	if err != nil {
-		ctx.Error(400, err.Error())
+	shop := ctx.Query("shop")
+	if shop == "" {
+		ctx.Error(http.StatusUnauthorized, "your request is invalid")
 		return
 	}
 
-	ctx.JSON(http.StatusOK, map[string]interface{}{"data": list})
+	list := make([]*models.CategoryModel, 0)
+	err := db.Table("category").Where("shop_id=?", shop).Scan(&list).Error
+	if err != nil {
+		ctx.Error(http.StatusBadRequest, err.Error())
+		return
+	}
+
+	ctx.Success(http.StatusOK, list)
 }
 
 // AddOne add one category record

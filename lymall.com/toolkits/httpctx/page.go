@@ -1,6 +1,9 @@
 package httpctx
 
-import "math"
+import (
+	"math"
+	"net/http"
+)
 
 // PageInfo used to data page
 type PageInfo struct {
@@ -32,8 +35,16 @@ func (ctx *HTTPCtx) QueryPageInfo(recordCount int) (rows, offset int, pageInfo *
 	// 保存页码信息
 	pageInfo.Index = index
 	pageInfo.Rows = rows
-	pageInfo.Total = int(math.Ceil(float64(recordCount / rows)))
+	pageInfo.Total = int(math.Ceil(float64(recordCount) / float64(rows)))
 
 	offset = (index - 1) * rows // 分页sql使用
 	return
+}
+
+// SuccessPage response success message,compatible for wechat mini app
+func (ctx *HTTPCtx) SuccessPage(code int, v interface{}, p *PageInfo) {
+	if code == 0 {
+		code = http.StatusOK
+	}
+	ctx.JSON(code, map[string]interface{}{"code": code, "data": v, "page": p})
 }
