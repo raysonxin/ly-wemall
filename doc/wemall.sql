@@ -99,7 +99,58 @@ create table shop_cart(
     ppv_brief       varchar(100)    not null comment '规格描述',
     ppv_ids         varchar(100)    not null comment '规格编号列表',
     stock_id        int             not null comment '库存单品编号',
+    shop_id         varchar(36)     not null comment '所属商店编号',
     primary key(id),
     index(open_id),
     constraint foreign key(product_id) references products(id) on delete cascade
 )engine=innodb default charset=utf8 comment '购物车信息';
+
+drop table if exists user_address;
+create table user_address(
+    id              int             not null auto_increment comment '主键编号',
+    contact         varchar(50)     not null comment '收件人',
+    mobile          varchar(20)     not null comment '收件人电话',
+    province        varchar(50)     not null comment '省份',
+    province_id     int             not null comment '省份编码',
+    city            varchar(50)     not null comment '城市',
+    city_id         int             not null comment '城市编码'
+    district        varchar(50)     not null comment '区县',
+    district_id     int             not null comment '区/县编码',
+    detail_address  varchar(200)    not null comment '详细地址',
+    post_code       char(6)         not null comment '邮政编码',
+    is_default      tinyint(1)      not null comment '是否默认',
+    open_id         varchar(100)    not null comment '用户openid',
+    primary key(id),
+    index(open_id)
+)engine=innodb default charset=utf8 comment '用户收货地址';
+
+drop table if exists orders;
+create table orders(
+    id              int             not null auto_increment comment '订单编号',
+    shop_id         varchar(36)     not null comment '所属商店',
+    open_id         varchar(100)    not null comment '用户编号',
+    goods_count     int             not null comment '商品数量',
+    total_price     int             not null comment '订单总价',
+    payment         int             not null comment '实付金额',
+    remark          varchar(300)    not null comment '备注',
+    create_time     datetime        not null comment '创建时间',
+    status          int             not null comment '订单状态：1-已创建，2-已取消，3-已付款',
+    primary key(id),
+    index(shop_id,open_id),
+    index(shop_id,create_time)
+)engine=innodb default charset=utf8 comment '订单信息表';
+
+drop table if exists order_goods;
+create table order_goods(
+    id              int             not null auto_increment comment '主键编号',
+    product_id      int             not null comment '产品编号',
+    product_name    varchar(100)    not null comment '产品名称',
+    count           int             not null comment '商品数量',
+    image           varchar(200)    not null comment '产品图片', 
+    price           int             not null comment '产品价格',
+    ppv_brief       varchar(100)    not null comment '规格描述',
+    ppv_ids         varchar(100)    not null comment '规格编号列表',
+    order_id        int             not null comment '所属订单编号',
+    primary key(id),
+    constraint foreign key(order_id) references orders(id) on delete cascade
+)engine=innodb default charset=utf8 comment '订单商品信息';

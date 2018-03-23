@@ -4,7 +4,10 @@
     "pages/logs/logs",
     "pages/cart/index",
     "pages/my/index",
-    "pages/goods-details/index"
+    "pages/goods-details/index",
+    "pages/create-order/index",
+    "pages/address/index",
+    "pages/address/add"
   ],
   "window": {
     "backgroundTextStyle": "light",

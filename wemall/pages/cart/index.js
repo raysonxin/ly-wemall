@@ -41,24 +41,32 @@ Page({
 
   onShow: function () {
     var that = this;
-    wx.request({
-      url: app.globalData.hostUrl + 'v1/shop/cart',
-      data: {
-        shop: app.globalData.shopId,
-        user: app.globalData.openId
-      },
-      success: function (res) {
-        if (res.data.code != 200) {
+    // wx.request({
+    //   url: app.globalData.hostUrl + 'v1/shop/cart',
+    //   data: {
+    //     shop: app.globalData.shopId,
+    //     user: app.globalData.openId
+    //   },
+    //   success: function (res) {
+    //     if (res.data.code != 200) {
 
-        } else {
-          var shopList = res.data.data;
-          if (shopList.length > 0) {
-            that.data.goodsList.list = shopList;
-            that.setGoodsList(that.getSaveHide(), that.totalPrice(), that.allSelect(), that.noSelect(), shopList);
-          }
-        }
-      }
-    })
+    //     } else {
+    //       var shopList = res.data.data;
+    //       if (shopList.length > 0) {
+    //         that.data.goodsList.list = shopList;
+    //         that.setGoodsList(that.getSaveHide(), that.totalPrice(), that.allSelect(), that.noSelect(), shopList);
+    //       }
+    //     }
+    //   }
+    // })
+    var goodsList = [];
+    var tempCart = wx.getStorageSync("shopCartInfo");
+    if (tempCart && tempCart.goodsList) {
+      goodsList = tempCart.goodsList;
+    }
+
+    this.data.goodsList.list = goodsList;
+    this.setGoodsList(this.getSaveHide(), this.totalPrice(), this.allSelect(), this.noSelect(), goodsList);
   },
 
   toIndexPage: function () {
@@ -202,11 +210,16 @@ Page({
     });
     var shopCarInfo = {};
     var tempNumber = 0;
-    shopCarInfo.shopList = list;
+    shopCarInfo.goodsList = list;
     for (var i = 0; i < list.length; i++) {
       tempNumber = tempNumber + list[i].Count
     }
     shopCarInfo.shopNum = tempNumber;
+
+    wx.setStorage({
+      key: 'shopCartInfo',
+      data: shopCarInfo,
+    })
   },
 
   /**
@@ -286,19 +299,30 @@ Page({
     this.setGoodsList(this.getSaveHide(), this.totalPrice(), this.allSelect(), this.noSelect(), list);
   },
 
-  toPayOrder: function () {
+  toCreateOrder: function () {
     wx.showLoading();
     var that = this;
     if (this.data.goodsList.noSelect) {
       wx.hideLoading();
       return;
     }
+
+    // var orderGoods = []
+    // var list = this.data.goodsList.list;
+    // for (var i = 0; i < list.length; i++) {
+    //   if (list[i].active) {
+    //     orderGoods.push(list[i])
+    //   }
+    // }
+
+    // wx.setStorageSync("orderGoods", orderGoods)
+    this.navigateToPayOrder();
   },
 
   navigateToPayOrder: function () {
     wx.hideLoading();
     wx.navigateTo({
-      url: "/pages/to-pay-order/index"
+      url: "/pages/create-order/index"
     })
   }
 })

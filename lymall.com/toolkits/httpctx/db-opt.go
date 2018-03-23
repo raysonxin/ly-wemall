@@ -63,7 +63,7 @@ func (ctx *HTTPCtx) DbUpdateOne(v interface{}, field string) {
 
 	err := ctx.CheckFormData(v)
 	if err != nil {
-		ctx.Error(http.StatusBadRequest, "the posted data is invalid")
+		ctx.Error(http.StatusBadRequest, err.Error())
 		return
 	}
 

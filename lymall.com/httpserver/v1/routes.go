@@ -16,6 +16,9 @@ func RegisterRoutes(m *macaron.Macaron) {
 		category := new(CategoryController)
 		product := new(ProductController)
 		cart := new(ShopCartController)
+		address := new(UserAddressController)
+		order := new(OrderController)
+
 		m.Group("/shop", func() {
 			m.Get("/category", category.List)
 			m.Group("/goods", func() {
@@ -26,6 +29,20 @@ func RegisterRoutes(m *macaron.Macaron) {
 				m.Post("", cart.AddOne)
 				m.Get("/count", cart.GetGoodsCountByUser)
 				m.Get("", cart.GetShopCart)
+			})
+			m.Group("/my", func() {
+				m.Group("/addr", func() {
+					m.Get("", address.List)
+					m.Get("/default", address.GetDefault)
+					m.Get("/:id/:user", address.GetById)
+					m.Get("/setdefault", address.SetDefault)
+					m.Post("", address.AddOne)
+					m.Put("/:id", address.UpdateOne)
+					m.Delete("/:ids", address.Delete)
+				})
+			})
+			m.Group("/order", func() {
+				m.Post("", order.AddOne)
 			})
 		})
 

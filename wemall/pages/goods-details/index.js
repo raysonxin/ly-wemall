@@ -178,34 +178,65 @@ Page({
     oneCart.ShopId = app.globalData.shopId;
 
     var that = this;
-    wx.request({
-      url: app.globalData.hostUrl + 'v1/shop/cart',
-      method: "POST",
-      header: { 'content-type': 'application/x-www-form-urlencoded' },
-      data: JSON.stringify(oneCart),
-      success: function (res) {
-        console.log(res);
-        if (res.data.code != 200) {
-          wx.showModal({
-            title: '提示',
-            content: '加入心愿单请求服务接口异常',
-          })
-          console.log(res.data.error)
-        } else {
-          var newNum = that.data.shopNum + that.data.buyNumber;
-          that.setData({
-            shopNum: newNum
-          })
-        }
+    // wx.request({
+    //   url: app.globalData.hostUrl + 'v1/shop/cart',
+    //   method: "POST",
+    //   header: { 'content-type': 'application/x-www-form-urlencoded' },
+    //   data: JSON.stringify(oneCart),
+    //   success: function (res) {
+    //     console.log(res);
+    //     if (res.data.code != 200) {
+    //       wx.showModal({
+    //         title: '提示',
+    //         content: '加入心愿单请求服务接口异常',
+    //       })
+    //       console.log(res.data.error)
+    //     } else {
+    //       var newNum = that.data.shopNum + that.data.buyNumber;
+    //       that.setData({
+    //         shopNum: newNum
+    //       })
+    //     }
+    //   }
+    // })
+
+    var tempCart = this.data.shopCartInfo;
+    if (!tempCart.shopNum) {
+      tempCart.shopNum = 0;
+    }
+
+    if (!tempCart.goodsList) {
+      tempCart.goodsList = [];
+    }
+
+    var existIndex = -1;
+    for (var i = 0; i < tempCart.goodsList.length; i++) {
+      var item = tempCart.goodsList[i];
+      if (item.ProductId == oneCart.ProductId && item.PpvIds == oneCart.PpvIds) {
+        existIndex = i;
+        oneCart.Count = oneCart.Count + item.Count;
+        break;
       }
-    })
+    }
+    tempCart.shopNum = tempCart.shopNum + this.data.buyNumber;
+    if (existIndex > -1) {
+      tempCart.goodsList.splice(existIndex, 1, oneCart);
+    } else {
+      tempCart.goodsList.push(oneCart);
+    }
+
+    wx.setStorageSync("shopCartInfo", tempCart);
+    this.setData({
+      shopCartInfo: tempCart,
+      shopNum: tempCart.shopNum
+    });
 
     this.closePopupTap();
 
-    //添加到购物车（请求服务方法）
+    //添加到收藏夹
     wx.showToast({
       icon: 'success',
-      title: '加入购物车成功！',
+      title: '加入收藏夹成功！',
       duration: 2000,
     })
   },
@@ -248,27 +279,38 @@ Page({
       }
     })
 
-    //查询购物车商品数量
-    wx.request({
-      url: app.globalData.hostUrl + 'v1/shop/cart/count',
-      data: {
-        shop: app.globalData.shopId,
-        user: app.globalData.openId
-      },
+    wx.getStorage({
+      key: "shopCartInfo",
       success: function (res) {
-        if (res.data.code != 200) {
-          wx.showModal({
-            title: '提示',
-            content: '请求服务接口异常',
-          })
-          console.log(res.data.error)
-        } else {
-          that.setData({
-            shopNum: res.data.data.Total
-          })
-        }
+        that.setData({
+          shopCartInfo: res.data,
+          shopNum: res.data.shopNum
+        })
       }
-    })
+    });
+
+
+    // //查询购物车商品数量
+    // wx.request({
+    //   url: app.globalData.hostUrl + 'v1/shop/cart/count',
+    //   data: {
+    //     shop: app.globalData.shopId,
+    //     user: app.globalData.openId
+    //   },
+    //   success: function (res) {
+    //     if (res.data.code != 200) {
+    //       wx.showModal({
+    //         title: '提示',
+    //         content: '请求服务接口异常',
+    //       })
+    //       console.log(res.data.error)
+    //     } else {
+    //       that.setData({
+    //         shopNum: res.data.data.Total
+    //       })
+    //     }
+    //   }
+    // })
   },
 
   /**
