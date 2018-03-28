@@ -1,0 +1,28 @@
+<view class="container">
+    <view class="order-list" hidden="{{orderList ? false : true}}">
+        <view class="a-order" wx:for-items="{{orderList}}" wx:key="{{index}}">
+            <view class="order-date">
+                <view class="date-box">下单时间：{{item.CreateTime}}</view>
+                <view class="status {{(item.Status==-1 || item.Status==4) ? '':'red'}}">{{statusType[item.Status]}}</view>
+            </view>
+            <view class="goods-info" bindtap="orderDetail" data-id="{{item.Id}}">
+                <view class="goods-des">
+                   <view>心愿单号：{{item.OrderNo}} </view>
+                   <view wx:if="{{item.Remark && item.Remark != ''}}">备注： {{item.Remark}}</view>
+                </view>
+            </view>
+            <view >
+                <scroll-view class="goods-img-container" scroll-x="true">
+                    <view class="img-box" wx:for-items="{{item.OrderGoods}}" wx:key="{{index}}">
+                        <image src="{{picUrl+item.Image}}" class="goods-img"></image>
+                    </view>
+                </scroll-view>
+            </view>
+            <view class="price-box">
+                <view class="total-price">合计：¥ {{item.Payment}}</view>
+                <view class="btn topay-btn" hidden="{{item.Status==1? false : true}}" bindtap="toPayTap" data-id="{{item.Id}}" data-money="{{item.Payment}}">联系客服</view>        
+            </view>  
+        </view>
+
+    </view>
+</view>

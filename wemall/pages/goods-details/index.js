@@ -274,6 +274,9 @@ Page({
             hasMoreSelect: res.data.data.HasProperty,
             selectSize: tempStr,
           })
+          wx.setNavigationBarTitle({
+            title: that.data.goodsDetail.Name
+          });
           WxParse.wxParse('article', 'html', res.data.data.Content, that, 5);
         }
       }
@@ -359,6 +362,8 @@ Page({
    * 用户点击右上角分享
    */
   onShareAppMessage: function () {
-
+    return {
+      title: this.data.goodsDetail.Name,
+    }
   }
 })

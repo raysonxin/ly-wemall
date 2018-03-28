@@ -13,6 +13,7 @@ func RegisterRoutes(m *macaron.Macaron) {
 			ctx.Header().Add("Access-Control-Allow-Header", "Qsc-Token,Content-TYpe")
 		})
 
+		basic := new(BasicController)
 		category := new(CategoryController)
 		product := new(ProductController)
 		cart := new(ShopCartController)
@@ -20,10 +21,13 @@ func RegisterRoutes(m *macaron.Macaron) {
 		order := new(OrderController)
 
 		m.Group("/shop", func() {
+			m.Get("/visitor", basic.GetUserInfo)
+
 			m.Get("/category", category.List)
 			m.Group("/goods", func() {
 				m.Get("", product.List)
 				m.Get("/:id", product.GetDetail)
+				m.Get("/tj", product.GetRecommand)
 			})
 			m.Group("/cart", func() {
 				m.Post("", cart.AddOne)
@@ -43,6 +47,8 @@ func RegisterRoutes(m *macaron.Macaron) {
 			})
 			m.Group("/order", func() {
 				m.Post("", order.AddOne)
+				m.Get("", order.List)
+				m.Get("/detail", order.GetOne)
 			})
 		})
 

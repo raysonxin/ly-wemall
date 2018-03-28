@@ -4,33 +4,33 @@ const app = getApp()
 
 Page({
   data: {
-    autoplay:true,
+    autoplay: true,
     interval: 3000,
     duration: 1000,
-    swiperCurrent:0,
+    swiperCurrent: 0,
     scrollTop: "0",
     loadingMoreHidden: true,
     categories: [],           //定义产品分类
     activeCategoryId: 0,      //当前选中的产品分类
-    // banners:[],
+    banners: [],
     goods: [],                 //商品列表
 
     searchInput: '',
     pageInfo: {},
     picHost: ''
   },
-  // swiperchange:function(e){
-  //   this.setData({
-  //     swiperCurrent: e.detail.current
-  //   })
-  // },
-  // tapBanner: function (e) {
-  //   if (e.currentTarget.dataset.id != 0) {
-  //   //  wx.navigateTo({
-  //    //   url: "/pages/goods-details/index?id=" + e.currentTarget.dataset.id
-  //    // })
-  //   }
-  // },
+  swiperchange: function (e) {
+    this.setData({
+      swiperCurrent: e.detail.current
+    })
+  },
+  tapBanner: function (e) {
+    if (e.currentTarget.dataset.id != 0) {
+      wx.navigateTo({
+        url: "/pages/goods-details/index?id=" + e.currentTarget.dataset.id
+      })
+    }
+  },
   // 监听搜索框输入
   listenerSearchInput: function (e) {
     this.setData({
@@ -59,7 +59,28 @@ Page({
   onReachBottom: function () {
 
   },
-
+  getRecommandList: function () {
+    var that = this
+    wx.request({
+      url: app.globalData.hostUrl + 'v1/shop/goods/tj',
+      data: {
+        shop: app.globalData.shopId
+      },
+      success: function (res) {
+        if (res.data.code != 200) {
+          wx.showModal({
+            title: '提示',
+            content: '请求服务接口异常',
+          })
+          console.log(res.data.error)
+        } else {
+          that.setData({
+            banners: res.data.data
+          })
+        }
+      }
+    })
+  },
   //查询商品列表
   getGoodsList: function (categoryId) {
     var that = this
@@ -136,7 +157,8 @@ Page({
       picHost: app.globalData.hostUrl
     })
 
-    this.getGoodsCategory()
-    this.getGoodsList(0)
+    this.getRecommandList();
+    this.getGoodsCategory();
+    this.getGoodsList(0);
   }
 })

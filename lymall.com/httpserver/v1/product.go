@@ -64,6 +64,28 @@ func (c *ProductController) List(ctx *httpctx.HTTPCtx, db *gorm.DB) {
 	ctx.SuccessPage(http.StatusOK, products, pageInfo)
 }
 
+// GetRecommand get recommand godds
+func (c *ProductController) GetRecommand(ctx *httpctx.HTTPCtx, db *gorm.DB) {
+	shop := ctx.Query("shop")
+	if shop == "" {
+		ctx.Error(http.StatusUnauthorized, "your request is invalid")
+		return
+	}
+
+	goods := make([]*models.ProductModel, 0)
+	err := db.Select("products.*,pi.url as cover_url").Table("products").
+		Joins("join product_category pc on products.id=pc.product_id").
+		Joins("join category cat on cat.id=pc.category_id").
+		Joins("join product_images pi on pi.id=products.cover").
+		Where("cat.shop_id=? and status=2", shop).
+		Limit(5).Scan(&goods).Error
+	if err != nil {
+		ctx.Error(http.StatusBadRequest, err.Error())
+		return
+	}
+	ctx.Success(http.StatusOK, goods)
+}
+
 // GetDetail get goods detail information
 func (c *ProductController) GetDetail(ctx *httpctx.HTTPCtx, db *gorm.DB) {
 	fmt.Println("2")

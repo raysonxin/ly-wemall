@@ -1,23 +1,23 @@
 package models
 
-import "time"
-
 // OrderModel 订单模型
 type OrderModel struct {
-	Id         int       `gorm:"column:id;primary_key"`
-	ShopId     string    `gorm:"column:shop_id"`
-	OpenId     string    `gorm:"column:open_id"`
-	GoodsCount int       `gorm:"column:goods_count"`
-	TotalPrice int       `gorm:"column:total_price"`
-	Payment    int       `gorm:"column:payment"`
-	Address    string    `gorm:"column:address"`
-	Contact    string    `gorm:"column:contact"`
-	Mobile     string    `gorm:"column:mobile"`
-	Remark     string    `gorm:"column:remark"`
-	CreateTime time.Time `gorm:"column:create_time"`
-	Status     int       `gorm:"column:status"`
+	Id         int      `gorm:"column:id;primary_key"`
+	OrderNo    string   `gorm:"column:order_no"`
+	ShopId     string   `gorm:"column:shop_id"`
+	OpenId     string   `gorm:"column:open_id"`
+	GoodsCount int      `gorm:"column:goods_count"`
+	GoodsPrice int      `gorm:"column:goods_price"`
+	YunPrice   int      `gorm:"column:yun_price"`
+	Payment    int      `gorm:"column:payment"`
+	Address    string   `gorm:"column:address"`
+	Contact    string   `gorm:"column:contact"`
+	Mobile     string   `gorm:"column:mobile"`
+	Remark     string   `gorm:"column:remark"`
+	CreateTime JsonTime `gorm:"column:create_time"`
+	Status     int      `gorm:"column:status"`
 
-	OrderGoods []OrderGoods `gorm:"-"`
+	OrderGoods []*OrderGoods `gorm:"-"`
 }
 
 // TableName 表名

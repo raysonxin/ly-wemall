@@ -1,15 +1,17 @@
 <template name="no-goods">
     <view class="title-box">
-        购物车空空如也～
+        收藏夹空空如也～
     </view>
+    <view class="to-index-btn-box">
     <view class="to-index-btn" bindtap="toIndexPage">
             去逛逛
+    </view>
     </view>
 </template>
 
 <template name="cart-goods-list">
     <view class="list-top">
-        <view class="label">LY-时尚购</view>
+        <view class="label">小艺美妆铺</view>
         <view class="edit-btn" hidden="{{!saveHidden}}" bindtap="editTap">编辑</view>
         <view class="edit-btn" hidden="{{saveHidden}}" bindtap="saveTap">完成</view>
     </view>

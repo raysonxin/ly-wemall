@@ -4,6 +4,7 @@ page{
 .container{
     justify-content:initial;
 }
+
 .title-box{
     width: 100%;
     padding-top: 330rpx;
@@ -13,6 +14,11 @@ page{
     background: url(https://cdn.it120.cc/images/weappshop/icon-cart.png) no-repeat center 205rpx;
     background-size: 100rpx auto;
     margin-bottom: 50rpx;
+}
+.to-index-btn-box{
+  width:100%;
+  display: flex;
+  justify-content:center;
 }
 .to-index-btn{
     color:#fff;

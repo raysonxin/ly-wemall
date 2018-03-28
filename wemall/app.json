@@ -7,12 +7,14 @@
     "pages/goods-details/index",
     "pages/create-order/index",
     "pages/address/index",
-    "pages/address/add"
+    "pages/address/add",
+    "pages/order/index",
+    "pages/order/detail"
   ],
   "window": {
     "backgroundTextStyle": "light",
     "navigationBarBackgroundColor": "#fff",
-    "navigationBarTitleText": "LY-时尚购",
+    "navigationBarTitleText": "小艺美妆铺",
     "navigationBarTextStyle": "black"
   },
   "tabBar": {

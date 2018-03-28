@@ -12,14 +12,14 @@ App({
       success: res => {
         // 发送 res.code 到后台换取 openId, sessionKey, unionId
         wx.request({
-          url: 'https://api.weixin.qq.com/sns/jscode2session?appid=wxdeeb117833e3f8da&secret=8e184d1763964f2d7413d3e684e6424d&js_code=' + res.code + '&grant_type=authorization_code',
-          data: {},
-          header: {
-            'content-type': 'application/json'
+          url: that.globalData.hostUrl + "v1/shop/visitor",
+          data: {
+            shop: that.globalData.shopId,
+            code: res.code
           },
           success: function (res) {
-            console.log(res);
-            that.globalData.openId = res.data.openid;
+            var temp = JSON.parse(res.data.data);
+            that.globalData.openId = temp.openid;
           }
         })
       }
@@ -49,6 +49,8 @@ App({
     userInfo: null,
     openId: '',
     shopId: "db2d59c0-1d52-421f-aa7d-a1f801f50280",
-    hostUrl: "http://127.0.0.1:8973/",
+    // hostUrl: "http://140.143.230.56:8973/",
+    // hostUrl: "http://127.0.0.1:8973/",
+    hostUrl: "https://xiaoyi.okruizhi.com/",
   }
 })

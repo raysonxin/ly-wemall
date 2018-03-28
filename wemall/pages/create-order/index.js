@@ -70,7 +70,8 @@ Page({
       ShopId: app.globalData.shopId,
       OpenId: app.globalData.openId,
       GoodsCount: that.data.goodsCount,
-      TotalPrice: that.data.allGoodsPrice,
+      GoodsPrice: that.data.allGoodsPrice,
+      YunPrice: that.data.yunPrice,
       Payment: that.data.allGoodsAndYunPrice,
       Address: addr.Province + addr.City + addr.District + addr.DetailAddress,
       Contact: that.data.defaultAddress.Contact,
@@ -124,6 +125,10 @@ Page({
             content: "已生成心愿单",
             showCancel: false
           });
+
+          wx.redirectTo({
+            url: '/pages/order/index',
+          })
         }
       }
     })
