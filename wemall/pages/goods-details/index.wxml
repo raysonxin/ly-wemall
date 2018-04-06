@@ -1,109 +1,96 @@
-<import src="../../wxParse/wxParse.wxml" />
+<!-- <import src="../../wxParse/wxParse.wxml" /> -->
 <view class="container">
-    <view class="swiper-container">
-        <swiper class="swiper_box" autoplay="{{autoplay}}" interval="{{interval}}" duration="{{duration}}" 
-            bindchange="swiperchange">
-            <block wx:for="{{goodsDetail.Gallery}}" wx:key="Id">
-                <swiper-item>
-                    <image src="{{picUrl+item.Url}}" class="slide-image" mode="aspectFit" lazy-load="true" width="335" height="150"/>
-                </swiper-item>
-            </block>    
-        </swiper>
-        <view class="dots">  
-            <block wx:for="{{goodsDetail.Gallery}}" wx:key="unique">
-                <view class="dot{{index == swiperCurrent ? ' active' : ''}}"></view>  
-            </block>  
-        </view>
+  <view class="swiper-container">
+    <swiper class="swiper_box" autoplay="{{autoplay}}" interval="{{interval}}" duration="{{duration}}" bindchange="swiperchange">
+      <block wx:for="{{goodsDetail.Gallery}}" wx:key="Id">
+        <swiper-item>
+          <image src="{{picUrl+item.Url}}" class="slide-image" mode="aspectFit" lazy-load="true" width="335" height="150" />
+        </swiper-item>
+      </block>
+    </swiper>
+    <view class="dots">
+      <block wx:for="{{goodsDetail.Gallery}}" wx:key="unique">
+        <view class="dot{{index == swiperCurrent ? ' active' : ''}}"></view>
+      </block>
     </view>
+  </view>
 
-    <view class="goods-info">
-        <view class="goods-title">{{goodsDetail.Name}}</view>
-        <view class="goods-price" style="padding-left:35rpx;">参考价格 ￥ {{goodsDetail.Price}}</view>
-        <view class="goods-info-fx">
-            <image src='../../images/qd.png' />
-            <button open-type="share">分享</button>
-            <text>告诉朋友</text>
-        </view>
+  <view class="goods-info">
+    <view class="goods-title">{{goodsDetail.Name}}</view>
+    <view class="goods-price" style="padding-left:35rpx;">参考价格 ￥ {{goodsDetail.Price}}</view>
+    <view class="goods-info-fx">
+      <image src='../../images/qd.png' />
+      <button open-type="share">分享</button>
+      <text>告诉朋友</text>
     </view>
+  </view>
 
-    <view wx:if="{{hasMoreSelect}}" class="row-arrow" bindtap="bindGuiGeTap">
-      {{selectSize}}
+  <view wx:if="{{hasMoreSelect}}" class="row-arrow" bindtap="bindGuiGeTap">
+    {{selectSize}}
+  </view>
+
+  <view class="goods-des-info">
+    <view class="label-title">商品介绍</view>
+    <view class="goods-text">
+      <!-- <template is="wxParse" data="{{wxParseData:article.nodes}}"/> -->
+      <!-- <view wx:for="{{goodsDetail.Details}}" wx:key="Id"> -->
+        <image wx:for="{{goodsDetail.Details}}" wx:key="Id" src="{{picUrl+item.Url}}" mode="widthFix" lazy-load="true" />
+      <!-- </view> -->
     </view>
+  </view>
 
-    <view class="goods-des-info">
-        <view class="label-title">商品介绍</view>
-        <view class="goods-text">
-            <template is="wxParse" data="{{wxParseData:article.nodes}}"/>
-        </view>
+  <view class="footer-box">
+    <view class="contact">
+      <contact-button style="opacity:0;position:absolute;" type="default-dark" session-from="weapp" size="27"></contact-button>
+      <view style='position:absolute;bottom:10rpx;'> 客服 </view>
     </view>
-
-    <view class="footer-box">        
-        <view class="contact">
-          <contact-button style="opacity:0;position:absolute;" type="default-dark"  session-from="weapp" size="27"></contact-button>
-          <view style='position:absolute;bottom:10rpx;'> 客服 </view>
-        </view>
-        <view class="shop-cart-btn" bindtap="goShopCart">
-            <view class="shop-num">({{shopNum}})</view>
-            <view style='position:absolute;bottom:10rpx;'> 收藏夹 </view>
-        </view>
-        <view class="join-shop-cart" bindtap="toAddShopCart">加入收藏夹</view>
+    <view class="shop-cart-btn" bindtap="goShopCart">
+      <view class="shop-num">({{shopNum}})</view>
+      <view style='position:absolute;bottom:10rpx;'> 收藏夹 </view>
     </view>
+    <view class="join-shop-cart" bindtap="toAddShopCart">加入收藏夹</view>
+  </view>
 
-    <view class="show-popup" hidden="{{hideShopPopup}}" >
-        <view class="popup-mask" bindtap="closePopupTap"></view>
-        <view class="popup-contents">
-             <view class="pop-goods-info">
-                <view class="pop-img-box">
-                    <image src="{{picUrl+goodsDetail.CoverUrl}}" class="goods-thumbnail"/>
-                </view>
-                <view class="pop-goods-des">
-                    <view class="pop-goods-title">{{goodsDetail.Name}}</view>
-                    <view class="pop-goods-price">¥ {{goodsDetail.Price}}</view>
-                </view>
-                <view class="pop-goods-close" bindtap="closePopupTap"></view>
-             </view>
-             <!-- <view class="size-label-box">
-                  <view class="label">{{goodsDetail.property.name}}：</view>
-                  <view class="label-item-box">
-                      <block wx:for="{{goodsDetail.property.values}}" wx:key="id">                     
-                          <view class="label-item {{item.active ? 'active' : '' }}" wx:key="id" 
-                                bindtap="labelItemTap" data-itemId="{{item.id}}"                                
-                                data-itemName="{{item.name}}">
-                                {{item.name}}
-                          </view>  
-                  </block>
-                  </view>
-             </view>  -->
-
-              <view class="size-label-box" wx:if="{{goodsDetail.HasProperty}}">
-                <block wx:for="{{goodsDetail.Properties}}" wx:for-item="property" wx:for-index="idx" wx:key="Id">
-                <view class="label">{{property.Name}}</view> 
-                <view class="label-item-box">
-                    <view class="label-item {{item.active ? 'active' : '' }}" 
-                          wx:for="{{property.SubProperties}}" wx:key="Id" 
-                          bindtap="labelItemTap" data-ppindex="{{idx}}" 
-                          data-ppid="{{property.Id}}" data-ppname="{{property.Name}}" 
-                          data-subindex="{{index}}" data-subid="{{item.Id}}" data-subname="{{item.Name}}">
-                        {{item.Name}}
-                    </view> 
-                </view>
-                </block>
-             </view>
-
-             <view class="buy-num-box">
-                <view class="num-label">选择数量</view>
-                <view class="num-box">
-                    <view class="num-jian {{buyNumber == buyNumMin ? 'hui': ''}}" bindtap="numJianTap">-</view>
-                    <view class="num-input">
-                       <input  type="number" value="{{buyNumber}}" disabled/>
-                    </view>
-                    <view class="num-jia {{buyNumber== buyNumMax ? 'hui': ''}}" bindtap="numJiaTap">+</view>
-                </view>
-             </view>  
-             <view class="popup-join-btn" bindtap="addShopCart">
-                加入收藏夹
-             </view>
-                              
+  <view class="show-popup" hidden="{{hideShopPopup}}">
+    <view class="popup-mask" bindtap="closePopupTap"></view>
+    <view class="popup-contents">
+      <view class="pop-goods-info">
+        <view class="pop-img-box">
+          <image src="{{picUrl+goodsDetail.CoverUrl}}" class="goods-thumbnail" />
         </view>
+        <view class="pop-goods-des">
+          <view class="pop-goods-title">{{goodsDetail.Name}}</view>
+          <view class="pop-goods-price">¥ {{goodsDetail.Price}}</view>
+        </view>
+        <view class="pop-goods-close" bindtap="closePopupTap"></view>
+      </view>
+
+      <view class="size-label-box" wx:if="{{goodsDetail.HasProperty}}">
+        <block wx:for="{{goodsDetail.Properties}}" wx:for-item="property" wx:for-index="idx" wx:key="Id">
+          <view class="label">{{property.Name}}</view>
+          <view class="label-item-box">
+            <view class="label-item {{item.active ? 'active' : '' }}" wx:for="{{property.SubProperties}}" wx:key="Id" bindtap="labelItemTap" data-ppindex="{{idx}}" data-ppid="{{property.Id}}" data-ppname="{{property.Name}}" data-subindex="{{index}}" data-subid="{{item.Id}}"
+              data-subname="{{item.Name}}">
+              {{item.Name}}
+            </view>
+          </view>
+        </block>
+      </view>
+
+      <view class="buy-num-box">
+        <view class="num-label">选择数量</view>
+        <view class="num-box">
+          <view class="num-jian {{buyNumber == buyNumMin ? 'hui': ''}}" bindtap="numJianTap">-</view>
+          <view class="num-input">
+            <input type="number" value="{{buyNumber}}" disabled/>
+          </view>
+          <view class="num-jia {{buyNumber== buyNumMax ? 'hui': ''}}" bindtap="numJiaTap">+</view>
+        </view>
+      </view>
+      <view class="popup-join-btn" bindtap="addShopCart">
+        加入收藏夹
+      </view>
+
     </view>
+  </view>
 </view>

@@ -9,7 +9,7 @@ Page({
   selectTap: function (e) {
     var id = e.currentTarget.dataset.id;
     wx.request({
-      url: app.globalData.hostUrl+'v1/shop/my/addr/setdefault',
+      url: app.globalData.hostUrl + 'v1/shop/my/addr/setdefault',
       data: {
         user: app.globalData.openId,
         id: id
@@ -33,7 +33,7 @@ Page({
   },
 
   onLoad: function () {
-   // console.log('onLoad')
+    // console.log('onLoad')
   },
 
   onShow: function () {
@@ -59,6 +59,12 @@ Page({
         }
       }
     })
-  }
+  },
+  /**
+ * 页面相关事件处理函数--监听用户下拉动作
+ */
+  onPullDownRefresh: function () {
+    wx.stopPullDownRefresh();
+  },
 
 })

@@ -1,0 +1,50 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/goods/index",
+    "pages/logs/logs",
+    "pages/goods/add",
+    "pages/order/index",
+    "pages/shop/index"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#fff",
+    "navigationBarTitleText": "小艺报价助手",
+    "navigationBarTextStyle": "black",
+    "enablePullDownRefresh": true
+  },
+  "tabBar": {
+    "color": "#6e6d6b",
+    "selectedColor": "#e64340",
+    "borderStyle": "white",
+    "backgroundColor": "#fff",
+    "box-shadow": "0 0 6px 0",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "iconPath": "images/nav/home-off.png",
+        "selectedIconPath": "images/nav/home-on.png",
+        "text": "首页"
+      },
+      {
+        "pagePath": "pages/goods/index",
+        "iconPath": "images/nav/goods-off.png",
+        "selectedIconPath": "images/nav/goods-on.png",
+        "text": "商品"
+      },
+      {
+        "pagePath": "pages/order/index",
+        "iconPath": "images/nav/order1-off.png",
+        "selectedIconPath": "images/nav/order1-on.png",
+        "text": "订单"
+      },
+      {
+        "pagePath": "pages/shop/index",
+        "iconPath": "images/nav/shop-off.png",
+        "selectedIconPath": "images/nav/shop-on.png",
+        "text": "店铺"
+      }
+    ]
+  }
+}

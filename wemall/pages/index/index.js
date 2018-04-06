@@ -17,6 +17,7 @@ Page({
 
     searchInput: '',
     pageInfo: {},
+    index:1,
     picHost: ''
   },
   swiperchange: function (e) {
@@ -41,7 +42,9 @@ Page({
   //商品分类切换事件
   tabClick: function (e) {
     this.setData({
-      activeCategoryId: e.currentTarget.id
+      activeCategoryId: e.currentTarget.id,
+      index:1,
+      goods:[]
     });
     this.getGoodsList(this.data.activeCategoryId);
   },
@@ -50,14 +53,29 @@ Page({
    * 页面相关事件处理函数--监听用户下拉动作
    */
   onPullDownRefresh: function () {
-
+    this.setData({
+      index: 1,
+      goods: []
+    })
+    this.getRecommandList();
+    this.getGoodsCategory();
+    this.getGoodsList(0);
+    wx.stopPullDownRefresh();
   },
 
   /**
    * 页面上拉触底事件的处理函数
    */
   onReachBottom: function () {
-
+    var that = this;
+    if (that.data.pageInfo.Index >= that.data.pageInfo.Total) {
+      return;
+    }
+    var tempIndex = that.data.pageInfo.Index + 1;
+    that.setData({
+      index: tempIndex
+    })
+    this.getGoodsList(that.data.activeCategoryId);
   },
   getRecommandList: function () {
     var that = this
@@ -85,11 +103,12 @@ Page({
   getGoodsList: function (categoryId) {
     var that = this
     wx.request({
-      url: app.globalData.hostUrl + 'v1/shop/goods',
+      url: app.globalData.hostUrl + 'v1/shop/goods/new',
       data: {
         shop: app.globalData.shopId,
         category: categoryId,
-        keywords: this.data.searchInput
+        keywords: this.data.searchInput,
+        index:that.data.index
       },
       success: function (res) {
         if (res.data.code != 200) {
@@ -99,8 +118,14 @@ Page({
           })
           console.log(res.data.error)
         } else {
+          var tempGoods = that.data.goods;
+          if (!tempGoods) {
+            tempGoods = [];
+          }
+          tempGoods = tempGoods.concat(res.data.data);
+
           that.setData({
-            goods: res.data.data,
+            goods: tempGoods,
             pageInfo: res.data.page
           })
         }
@@ -149,6 +174,10 @@ Page({
 
   // 搜索按钮事件
   toSearch: function () {
+    this.setData({
+      index: 1,
+      goods: []
+    })
     this.getGoodsList(this.data.activeCategoryId);
   },
 

@@ -322,7 +322,13 @@ Page({
   navigateToPayOrder: function () {
     wx.hideLoading();
     wx.navigateTo({
-      url: "/pages/create-order/index"
+      url: "/pages/order/create"
     })
-  }
+  },
+  /**
+   * 页面相关事件处理函数--监听用户下拉动作
+   */
+  onPullDownRefresh: function () {
+    wx.stopPullDownRefresh();
+  },
 })

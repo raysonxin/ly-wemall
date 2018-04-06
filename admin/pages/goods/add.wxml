@@ -1,0 +1,68 @@
+<import src="/dist/field/index.wxml" />
+<view class="container">
+  <form bindsubmit='bindSave'>
+    <view class="zan-panel-title">基本信息</view>
+    <view class="zan-panel">
+      <template is="zan-field" data="{{name:'gname',title:'商品名称',inputType:'input',placeholder:'名称',value:goodsInfo.Name}}">
+      </template>
+      <template is="zan-field" data="{{name:'price',title:'报价',inputType:'number',placeholder:'人民币',value:goodsInfo.Price}}">
+      </template>
+      <view class="zan-cell zan-field">
+        <view class="zan-cell__hd zan-field__title">商品分类</view>
+        <picker mode="selector" class="zan-field__input zan-cell__bd" range="{{ categories }}" range-key="Name" bindchange="bindPickerChange">
+          {{selCategory}}
+        </picker>
+      </view>
+      <view class="zan-cell zan-field">
+        <view class="zan-cell__hd zan-field__title">条形码</view>
+        <input type="text" placeholder="请输入或扫描条形码" class="zan-field__input zan-cell__bd" value="{{code}}" name="code" />
+        <view class="zan-cell__ft" bindtap='tapScanCode'>
+          <image src="../../images/scan.png" />
+        </view>
+      </view>
+    </view>
+    <view class="zan-panel-title">封面图片（限1张）</view>
+    <view class="zan-panel">
+      <view class="zan-cell zan-field">
+        <view class='image-box'>
+          <image src="{{picUrl+coverUrl.Url}}" mode='aspectFill'></image>
+        </view>
+        <view class="zan-cell__ft" bindtap='chooseConverImage'>
+          <image src="../../images/choose-pic.png" />
+        </view>
+
+      </view>
+    </view>
+
+    <view class="zan-panel-title">相册图片（限3张）</view>
+    <view class="zan-panel">
+      <view class="zan-cell zan-field">
+        <view class='image-box'>
+          <image wx:for="{{galleryUrls}}" wx:key="*this" src="{{picUrl+item.Url}}" data-index="{{index}}" mode='aspectFill' bindlongpress='toDelGalleryImage'></image>
+        </view>
+        <view class="zan-cell__ft" bindtap='chooseGalleryImage'>
+          <image src="../../images/choose-pic.png" />
+        </view>
+
+      </view>
+    </view>
+
+    <view class="zan-panel-title">详细介绍（限10张）</view>
+    <view class="zan-panel">
+      <view class="zan-cell zan-field">
+        <view class='image-box'>
+          <image wx:for="{{detailsUrls}}" wx:key="*this" src="{{picUrl+item.Url}}" mode='aspectFill' data-index="{{index}}" bindlongpress='toDelDetailImage'></image>
+        </view>
+        <view class="zan-cell__ft" bindtap='chooseDetailsImage'>
+          <image src="../../images/choose-pic.png" />
+        </view>
+      </view>
+    </view>
+
+    <view class="zan-panel submit-edit">
+
+      <button class="zan-btn zan-btn--danger" formType="submit">保存</button>
+    </view>
+
+  </form>
+</view>

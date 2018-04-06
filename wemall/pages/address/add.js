@@ -3,7 +3,7 @@ var commonCityData = require('../../utils/city.js')
 var app = getApp()
 Page({
   data: {
-    id:0,
+    id: 0,
     provinces: [],
     citys: [],
     districts: [],
@@ -89,8 +89,8 @@ Page({
     //   apiAddid = 0;
     // }
 
-    var method = this.data.id == 0 ? "POST" :"PUT";
-    var fix=this.data.id==0?"":"/"+this.data.id;
+    var method = this.data.id == 0 ? "POST" : "PUT";
+    var fix = this.data.id == 0 ? "" : "/" + this.data.id;
 
     var addr = {};
     addr.Contact = linkMan;
@@ -103,18 +103,18 @@ Page({
     addr.DistrictId = districtId == "" ? 0 : districtId;
     addr.DetailAddress = address;
     addr.PostCode = code;
-    addr.OpenId=app.globalData.openId;
+    addr.OpenId = app.globalData.openId;
     addr.Id = parseInt(this.data.id);
 
     wx.request({
-      url: app.globalData.hostUrl + 'v1/shop/my/addr'+fix,
+      url: app.globalData.hostUrl + 'v1/shop/my/addr' + fix,
       method: method,
       header: {
         'content-type': 'application/x-www-form-urlencoded'
       },
       data: JSON.stringify(addr),
       success: function (res) {
-        if (res.data.code != 200) { 
+        if (res.data.code != 200) {
           wx.hideLoading();
           wx.showModal({
             title: '失败',
@@ -202,7 +202,7 @@ Page({
       // 初始化原数据
       wx.showLoading();
       wx.request({
-        url: app.globalData.hostUrl+"v1/shop/my/addr/"+id+"/"+app.globalData.openId,
+        url: app.globalData.hostUrl + "v1/shop/my/addr/" + id + "/" + app.globalData.openId,
         data: {},
         success: function (res) {
           wx.hideLoading();
@@ -257,8 +257,8 @@ Page({
       success: function (res) {
         if (res.confirm) {
           wx.request({
-            url:app.globalData.hostUrl +'v1/shop/my/addr/'+id,
-            method:"DELETE",
+            url: app.globalData.hostUrl + 'v1/shop/my/addr/' + id,
+            method: "DELETE",
             data: {
             },
             success: (res) => {
@@ -303,5 +303,11 @@ Page({
         });
       }
     })
-  }
+  },
+  /**
+ * 页面相关事件处理函数--监听用户下拉动作
+ */
+  onPullDownRefresh: function () {
+    wx.stopPullDownRefresh();
+  },
 })

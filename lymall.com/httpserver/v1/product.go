@@ -64,6 +64,53 @@ func (c *ProductController) List(ctx *httpctx.HTTPCtx, db *gorm.DB) {
 	ctx.SuccessPage(http.StatusOK, products, pageInfo)
 }
 
+// List get goods list by shop and category with page info
+func (c *ProductController) List2(ctx *httpctx.HTTPCtx, db *gorm.DB) {
+	shop := ctx.Query("shop")
+	if shop == "" {
+		ctx.Error(http.StatusUnauthorized, "your request is invalid")
+		return
+	}
+	where := fmt.Sprintf("p.shop_id='%s'", shop)
+
+	catId := ctx.QueryInt("category")
+	if catId != 0 {
+		where = fmt.Sprintf("%s and p.category_id=%d", where, catId)
+	}
+
+	keywords := ctx.Query("keywords")
+	if keywords != "" {
+		where = fmt.Sprintf("%s and p.name like '%%%s%%'", where, keywords)
+	}
+
+	products := make([]*models.ProductModel, 0)
+	var total int64
+
+	sql := fmt.Sprintf(`(SELECT distinct * FROM  products p WHERE (%s)) a`, where)
+	err := db.Table(sql).Count(&total).Error
+	if err != nil {
+		ctx.Error(http.StatusBadRequest, err.Error())
+		return
+	}
+
+	limit, offset, pageInfo := ctx.QueryPageInfo(int(total))
+
+	err = db.Select("distinct p.id,p.name,p.price,p.cover,p.status,pi.url cover_url").Table("products p").
+		Joins("join product_images pi on pi.id=p.cover").
+		Where(where).
+		Order("p.id desc").
+		Limit(limit).
+		Offset(offset).
+		Scan(&products).
+		Error
+
+	if err != nil {
+		ctx.Error(http.StatusBadRequest, err.Error())
+		return
+	}
+	ctx.SuccessPage(http.StatusOK, products, pageInfo)
+}
+
 // GetRecommand get recommand godds
 func (c *ProductController) GetRecommand(ctx *httpctx.HTTPCtx, db *gorm.DB) {
 	shop := ctx.Query("shop")
@@ -74,10 +121,8 @@ func (c *ProductController) GetRecommand(ctx *httpctx.HTTPCtx, db *gorm.DB) {
 
 	goods := make([]*models.ProductModel, 0)
 	err := db.Select("products.*,pi.url as cover_url").Table("products").
-		Joins("join product_category pc on products.id=pc.product_id").
-		Joins("join category cat on cat.id=pc.category_id").
 		Joins("join product_images pi on pi.id=products.cover").
-		Where("cat.shop_id=? and status=2", shop).
+		Where("shop_id=? and status=2", shop).
 		Limit(5).Scan(&goods).Error
 	if err != nil {
 		ctx.Error(http.StatusBadRequest, err.Error())
@@ -119,6 +164,21 @@ func (c *ProductController) GetDetail(ctx *httpctx.HTTPCtx, db *gorm.DB) {
 		fmt.Println("err=", err.Error())
 	}
 
+	detailsIds := make([]*int, 0)
+	err = json.Unmarshal([]byte(one.Content), &detailsIds)
+	if err == nil {
+		detail := make([]*models.ProductImageModel, 0)
+		err = db.Table("product_images").Where("id in (?)", detailsIds).Scan(&detail).Error
+		if err != nil {
+			ctx.Error(http.StatusBadRequest, err.Error())
+			return
+		}
+
+		one.Details = detail
+	} else {
+		fmt.Println("err=", err.Error())
+	}
+
 	var ppCount int64
 	err = db.Table("product_property").Where("product_id=?", productId).Count(&ppCount).Error
 	if err != nil || ppCount == 0 {
@@ -145,4 +205,16 @@ func (c *ProductController) GetDetail(ctx *httpctx.HTTPCtx, db *gorm.DB) {
 
 	one.Properties = properties
 	ctx.Success(http.StatusOK, one)
+}
+
+// AddOne add product
+func (c *ProductController) AddOne(ctx *httpctx.HTTPCtx, db *gorm.DB) {
+	one := new(models.ProductModel)
+	ctx.DbAddOne(one)
+}
+
+// AddOne add product
+func (c *ProductController) UpdateOne(ctx *httpctx.HTTPCtx, db *gorm.DB) {
+	one := new(models.ProductModel)
+	ctx.DbUpdateOne(one, "id")
 }

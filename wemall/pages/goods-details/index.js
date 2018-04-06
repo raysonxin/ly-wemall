@@ -1,6 +1,6 @@
 // pages/goods-details/index.js
 var app = getApp();
-var WxParse = require('../../wxParse/wxParse.js');
+// var WxParse = require('../../wxParse/wxParse.js');
 
 Page({
 
@@ -33,7 +33,6 @@ Page({
 
   //事件处理函数
   swiperchange: function (e) {
-    //console.log(e.detail.current)
     this.setData({
       swiperCurrent: e.detail.current
     })
@@ -178,28 +177,6 @@ Page({
     oneCart.ShopId = app.globalData.shopId;
 
     var that = this;
-    // wx.request({
-    //   url: app.globalData.hostUrl + 'v1/shop/cart',
-    //   method: "POST",
-    //   header: { 'content-type': 'application/x-www-form-urlencoded' },
-    //   data: JSON.stringify(oneCart),
-    //   success: function (res) {
-    //     console.log(res);
-    //     if (res.data.code != 200) {
-    //       wx.showModal({
-    //         title: '提示',
-    //         content: '加入心愿单请求服务接口异常',
-    //       })
-    //       console.log(res.data.error)
-    //     } else {
-    //       var newNum = that.data.shopNum + that.data.buyNumber;
-    //       that.setData({
-    //         shopNum: newNum
-    //       })
-    //     }
-    //   }
-    // })
-
     var tempCart = this.data.shopCartInfo;
     if (!tempCart.shopNum) {
       tempCart.shopNum = 0;
@@ -248,7 +225,6 @@ Page({
     this.setData({
       picUrl: app.globalData.hostUrl
     })
-    console.log(options)
     var id = options.id
     var that = this;
 
@@ -262,7 +238,6 @@ Page({
           })
           console.log(res.data.error)
         } else {
-          console.log(res.data.data)
           if (res.data.data.HasProperty) {
             var tempStr = "选择："
             for (var i = 0; i < res.data.data.Properties.length; i++) {
@@ -277,7 +252,7 @@ Page({
           wx.setNavigationBarTitle({
             title: that.data.goodsDetail.Name
           });
-          WxParse.wxParse('article', 'html', res.data.data.Content, that, 5);
+          // WxParse.wxParse('article', 'html', res.data.data.Content, that, 5);
         }
       }
     })
@@ -291,29 +266,6 @@ Page({
         })
       }
     });
-
-
-    // //查询购物车商品数量
-    // wx.request({
-    //   url: app.globalData.hostUrl + 'v1/shop/cart/count',
-    //   data: {
-    //     shop: app.globalData.shopId,
-    //     user: app.globalData.openId
-    //   },
-    //   success: function (res) {
-    //     if (res.data.code != 200) {
-    //       wx.showModal({
-    //         title: '提示',
-    //         content: '请求服务接口异常',
-    //       })
-    //       console.log(res.data.error)
-    //     } else {
-    //       that.setData({
-    //         shopNum: res.data.data.Total
-    //       })
-    //     }
-    //   }
-    // })
   },
 
   /**
@@ -348,7 +300,7 @@ Page({
    * 页面相关事件处理函数--监听用户下拉动作
    */
   onPullDownRefresh: function () {
-
+    wx.stopPullDownRefresh();
   },
 
   /**
